@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>concerts</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="style.css?v=1">
+</head>
+<body>
+<header>
+  <h1>concerts</h1>
+  <p id="stats"></p>
+  <div class="controls">
+    <input id="q" type="search" placeholder="search bands, venues, songs, tours, dates" autocomplete="off">
+    <nav>
+      <button data-view="timeline" class="on">timeline</button>
+      <button data-view="map">map</button>
+    </nav>
+  </div>
+</header>
+<main>
+  <section id="timeline"></section>
+  <section id="map" hidden></section>
+</main>
+<div id="player" hidden>
+  <div class="frame">
+    <video controls playsinline></video>
+    <p class="caption"></p>
+    <div class="nav"><button data-step="-1">prev</button><button data-step="1">next</button><button data-close>close</button></div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="app.js?v=1"></script>
+</body>
+</html>

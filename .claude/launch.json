@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "concerts",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["http-server", "site", "-p", "8790", "-c-1", "--silent"],
+      "port": 8790
+    }
+  ]
+}

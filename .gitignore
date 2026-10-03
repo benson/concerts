@@ -1,0 +1,8 @@
+.env
+.icloud/
+.venv/
+__pycache__/
+/data/
+site/media/v
+site/media/v/
+node_modules/
