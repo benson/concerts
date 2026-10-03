@@ -1,4 +1,4 @@
-const VIDEO = location.hostname === "localhost" ? "media/v/" : "https://pub-2d6e5c0e5cdc4d5490649e8847c34a82.r2.dev/";
+const VIDEO = location.hostname === "localhost" ? "media/v/" : "https://clips.bensonperry.com/";
 const MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
 const $ = (s, el = document) => el.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -64,7 +64,7 @@ function body(s, terms) {
   return `<div class="show-body">${groups.map(g => {
     const tour = ownTour(s, g.band);
     return `<div class="band-row"><div class="band-name">${esc(g.name)}${tour ? ` <span class="tour">· ${esc(tour)}</span>` : ""}</div>
-      <div class="thumbs">${g.clips.map(c => `<img class="thumb" loading="lazy" tabindex="0" src="media/t/${c.id}.jpg"
+      <div class="thumbs">${g.clips.map(c => `<img class="thumb" loading="lazy" tabindex="0" src="media/t/${c.id}.jpg?v=3"
         data-show="${s.id}" data-clip="${c.id}" alt="${esc(g.name)}${c.song ? " – " + esc(c.song) : ""}"
         title="${esc([c.time, c.song].filter(Boolean).join(" · "))}">`).join("")}</div></div>`;
   }).join("")}</div>`;
