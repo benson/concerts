@@ -26,8 +26,8 @@ def main():
         ev = evidence.get(r["night_id"], {})
         clips = []
         for p, x in r["clips"].items():
-            if x.get("not_show"):
-                continue
+            if x.get("not_show") or (videos.get(p, {}).get("duration") or 0) < 2:
+                continue  # non-show clips and sub-2s accidental taps
             v = videos.get(p, {})
             clips.append({"id": clip_id(p), "time": (v.get("local") or "")[11:16] or None,
                           "seconds": round(v.get("duration") or 0), "band": x.get("band"),
