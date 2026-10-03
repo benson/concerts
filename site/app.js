@@ -64,7 +64,7 @@ function body(s, terms) {
   return `<div class="show-body">${groups.map(g => {
     const tour = ownTour(s, g.band);
     return `<div class="band-row"><div class="band-name">${esc(g.name)}${tour ? ` <span class="tour">· ${esc(tour)}</span>` : ""}</div>
-      <div class="thumbs">${g.clips.map(c => `<img class="thumb" loading="lazy" tabindex="0" src="media/t/${c.id}.jpg?v=3"
+      <div class="thumbs">${g.clips.map(c => `<img class="thumb" loading="lazy" tabindex="0" src="media/t/${c.id}.jpg?v=3${c.r ? "&r=" + c.r : ""}"
         data-show="${s.id}" data-clip="${c.id}" alt="${esc(g.name)}${c.song ? " – " + esc(c.song) : ""}"
         title="${esc([c.time, c.song].filter(Boolean).join(" · "))}">`).join("")}</div></div>`;
   }).join("")}</div>`;
@@ -82,7 +82,7 @@ function show() {
   const { s, c } = queue[qi];
   const p = $("#player"), v = $("video", p);
   p.hidden = false;
-  v.src = `${VIDEO}${c.id}.mp4`;
+  v.src = `${VIDEO}${c.id}.mp4${c.r ? "?r=" + c.r : ""}`;
   v.play().catch(() => {});
   const tour = ownTour(s, c.band) || s.event;
   $(".caption", p).innerHTML = `${esc(bandOf(c))}${c.song ? " – " + esc(c.song) : ""}<br>

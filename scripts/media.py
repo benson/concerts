@@ -26,12 +26,17 @@ TONEMAP = ("zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=habl
            "zscale=t=bt709:m=bt709:r=tv,")
 
 
-def video_filter(src, height):
+ROTATE_FILE = BASE / "data" / "rotate.json"
+ROTATE = json.loads(ROTATE_FILE.read_text()) if ROTATE_FILE.exists() else {}  # clip id -> clockwise turn
+TURN = {90: "transpose=1,", 180: "hflip,vflip,", 270: "transpose=2,"}
+
+
+def video_filter(src, height, cid=None):
     r = subprocess.run(["ffprobe", "-v", "quiet", "-select_streams", "v:0", "-show_entries", "stream=color_transfer",
                         "-of", "csv=p=0", str(src)], capture_output=True, text=True)
     hdr = r.stdout.strip().strip(",") in ("arib-std-b67", "smpte2084")
     scale = f"scale=-2:'min({height},ih)'"
-    return f"{scale}," + (TONEMAP if hdr else "") + "format=yuv420p"
+    return TURN.get(ROTATE.get(cid), "") + f"{scale}," + (TONEMAP if hdr else "") + "format=yuv420p"
 
 
 def make(path):
@@ -39,11 +44,11 @@ def make(path):
     thumb, proxy = THUMBS / f"{cid}.jpg", PROXIES / f"{cid}.mp4"
     if not thumb.exists():
         subprocess.run(["ffmpeg", "-v", "quiet", "-y", "-ss", "1", "-i", str(src), "-frames:v", "1",
-                        "-vf", video_filter(src, 360), "-q:v", "4", str(thumb)])
+                        "-vf", video_filter(src, 360, cid), "-q:v", "4", str(thumb)])
     if not proxy.exists():
         tmp = proxy.with_suffix(".part.mp4")
         r = subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(src),
-                            "-vf", video_filter(src, 720), "-c:v", "h264_nvenc", "-preset", "p5", "-cq", "30", "-fpsmax", "30",
+                            "-vf", video_filter(src, 720, cid), "-c:v", "h264_nvenc", "-preset", "p5", "-cq", "30", "-fpsmax", "30",
                             "-c:a", "aac", "-b:a", "128k", "-movflags", "+faststart", str(tmp)])
         if r.returncode == 0:
             tmp.rename(proxy)

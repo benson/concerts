@@ -14,6 +14,7 @@ def clip_id(path):
 
 def main():
     videos = {v["path"]: v for v in json.loads((DATA / "videos.json").read_text())}
+    rotated = json.loads((DATA / "rotate.json").read_text()) if (DATA / "rotate.json").exists() else {}
     evidence = {}
     for f in glob.glob(str(DATA / "nights" / "*" / "evidence.json")):
         e = json.loads(Path(f).read_text(encoding="utf-8"))
@@ -31,7 +32,8 @@ def main():
             v = videos.get(p, {})
             clips.append({"id": clip_id(p), "time": (v.get("local") or "")[11:16] or None,
                           "seconds": round(v.get("duration") or 0), "band": x.get("band"),
-                          "song": x.get("song"), "confidence": x.get("confidence")})
+                          "song": x.get("song"), "confidence": x.get("confidence"),
+                          **({"r": 1} if clip_id(p) in rotated else {})})
         clips.sort(key=lambda c: (c["time"] is None, c["time"] or "", c["id"]))
         shows[r["night_id"]] = {
             "id": r["night_id"], "date": r["date"], "venue": r.get("venue"), "city": r.get("city"),
