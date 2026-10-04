@@ -77,7 +77,12 @@ h2 { font-size: 13px; font-weight: 600; color: var(--muted); margin: 32px 0 6px;
 .thumb:hover { opacity: 0.85; }
 .empty { color: var(--muted); padding: 40px 0; }
 
-#map { height: 70vh; border-radius: 8px; overflow: hidden; }
+#map { height: 70vh; border-radius: 8px; overflow: hidden; background: var(--hover); }
+#map .leaflet-tile-pane { filter: grayscale(1) contrast(0.9) brightness(1.05); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) #map .leaflet-tile-pane { filter: grayscale(1) invert(1) brightness(0.85) contrast(0.85); }
+}
+:root[data-theme="dark"] #map .leaflet-tile-pane { filter: grayscale(1) invert(1) brightness(0.85) contrast(0.85); }
 .leaflet-popup-content { font: 13px/1.4 ui-sans-serif, system-ui, sans-serif; }
 .leaflet-popup-content a { color: inherit; }
 

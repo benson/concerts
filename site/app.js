@@ -105,9 +105,8 @@ function setView(view) {
 function drawMap() {
   if (!map) {
     map = L.map("map", { zoomControl: true, attributionControl: true });
-    const dark = matchMedia("(prefers-color-scheme: dark)").matches;
-    L.tileLayer(`https://{s}.basemaps.cartocdn.com/${dark ? "dark_all" : "light_all"}/{z}/{x}/{y}{r}.png`, {
-      attribution: "&copy; OpenStreetMap &copy; CARTO", maxZoom: 19,
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "&copy; OpenStreetMap contributors", maxZoom: 19,
     }).addTo(map);
   }
   setTimeout(() => map.invalidateSize(), 0);
@@ -124,7 +123,13 @@ function drawMap() {
       .bindPopup(`<strong>${esc(name)}</strong><br>${v.shows.map(s =>
         `<a href="#" data-goto="${s.id}">${fmtDate(s.date)} ${s.date.slice(0, 4)}</a> ${esc(s.lineup.slice(0, 3).map(b => b.band).join(", "))}`).join("<br>")}`)
   )).addTo(map);
-  if (Object.keys(venues).length) map.fitBounds(mapLayer.getBounds().pad(0.1), { maxZoom: 14 });
+  const pts = Object.values(venues);
+  if (pts.length) {
+    // frame the area with most shows; distant one-off venues stay reachable by zooming out
+    const mid = [...pts].sort((a, b) => b.shows.length - a.shows.length)[0];
+    const near = pts.filter(v => map.distance([v.lat, v.lon], [mid.lat, mid.lon]) < 60000);
+    map.fitBounds(L.latLngBounds(near.map(v => [v.lat, v.lon])).pad(0.15), { maxZoom: 14 });
+  }
 }
 
 document.addEventListener("click", e => {
