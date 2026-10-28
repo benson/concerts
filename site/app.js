@@ -84,6 +84,7 @@ function show() {
   p.hidden = false;
   v.src = `${VIDEO}${c.id}.mp4${c.r ? "?r=" + c.r : ""}`;
   v.play().catch(() => {});
+  history.replaceState(null, "", "#" + c.id);
   const tour = ownTour(s, c.band) || s.event;
   $(".caption", p).innerHTML = `${esc(bandOf(c))}${c.song ? " – " + esc(c.song) : ""}<br>
     <span class="meta">${esc(s.venue || "")} · ${fmtDate(s.date)} ${s.date.slice(0, 4)}${c.time ? " · " + c.time : ""}${tour ? " · " + esc(tour) : ""}</span>`;
@@ -93,6 +94,17 @@ function closePlayer() {
   const p = $("#player");
   $("video", p).pause();
   p.hidden = true;
+  history.replaceState(null, "", location.pathname + location.search);
+}
+
+function openFromHash() {
+  const id = decodeURIComponent(location.hash.slice(1));
+  const s = id && shows.find(s => s.clips.some(c => c.id === id));
+  if (!s) return;
+  open.add(s.id);
+  render();
+  document.querySelector(`[data-id="${s.id}"]`)?.scrollIntoView({ block: "center" });
+  play(s.id, id);
 }
 
 function setView(view) {
@@ -179,4 +191,7 @@ fetch("data/catalog.json?v=" + Date.now()).then(r => r.json()).then(data => {
   const years = shows.map(s => s.date.slice(0, 4));
   $("#stats").textContent = `${withVideo.length} filmed shows · ${shows.length - withVideo.length} more from tickets · ${bands.size} bands · ${shows.reduce((n, s) => n + s.clips.length, 0)} clips · ${years.at(-1)}–${years[0]}`;
   render();
+  openFromHash();
 });
+
+addEventListener("hashchange", openFromHash);
