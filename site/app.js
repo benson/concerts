@@ -156,6 +156,17 @@ document.addEventListener("click", e => {
   if (t) return play(t.dataset.show, t.dataset.clip);
   const step = e.target.closest("[data-step]");
   if (step) { qi = (qi + +step.dataset.step + queue.length) % queue.length; return show(); }
+  const copy = e.target.closest("[data-copy]");
+  if (copy) {
+    const done = () => { copy.textContent = "copied"; setTimeout(() => copy.textContent = "copy link", 1500); };
+    navigator.clipboard.writeText(location.href).then(done, () => {
+      const t = Object.assign(document.createElement("textarea"), { value: location.href });
+      document.body.append(t); t.select();
+      if (document.execCommand("copy")) done();
+      t.remove();
+    });
+    return;
+  }
   if (e.target.closest("[data-close]") || e.target.id === "player") return closePlayer();
   const v = e.target.closest("nav button");
   if (v) return setView(v.dataset.view);
